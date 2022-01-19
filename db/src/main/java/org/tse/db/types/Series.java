@@ -1,5 +1,9 @@
 package org.tse.db.types;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -8,66 +12,75 @@ import java.util.LinkedList;
 // La db stocke des collections de séries
 public class Series implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8962558508769405528L;
-	private LinkedList<Data> dataList;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -8962558508769405528L;
+    private LinkedList<Data> dataList;
 
-	public Series() {
-		this.dataList = new LinkedList<Data>();
-	}
+    public Series() {
+        this.dataList = new LinkedList<Data>();
+    }
 
-	public Series(Collection<Data> data) {
-		this.dataList = new LinkedList<Data>(data);
-	}
+    public Series(Collection<Data> data) {
+        this.dataList = new LinkedList<Data>(data);
+    }
 
-	public LinkedList<Data> getData() {
-		return dataList;
-	}
+    public LinkedList<Data> getData() {
+        return dataList;
+    }
 
-	public void setData(Collection<Data> data) {
-		this.dataList = new LinkedList<Data>(data);
-	}
-	
+    public void setData(Collection<Data> data) {
+        this.dataList = new LinkedList<Data>(data);
+    }
 
-	public LinkedList<Data> getDataList() {
-		return dataList;
-	}
 
-	public void setDataList(LinkedList<Data> dataList) {
-		this.dataList = dataList;
-	}
+    public LinkedList<Data> getDataList() {
+        return dataList;
+    }
 
-	public void addData(Data data) {
-		this.dataList.add(data);
-	}
+    public void setDataList(LinkedList<Data> dataList) {
+        this.dataList = dataList;
+    }
 
-	public void removeData(Data data) {
-		this.dataList.remove(data);
-	}
+    public void addData(Data data) {
+        this.dataList.add(data);
+    }
 
-	@Override
-	public String toString() {
-		return "Series [dataList=" + dataList + "]";
-	}
+    public void removeData(Data data) {
+        this.dataList.remove(data);
+    }
 
-	public void deltaCompression() {
-		Double previousValue = 0.0;
+    @Override
+    public String toString() {
+        return "Series [dataList=" + dataList + "]";
+    }
 
-		for (Data d : this.dataList) {
-			d.setValue(d.getValue() - previousValue);
-			previousValue += d.getValue();
-		}
-	}
+    public void deltaCompression() {
+        Double previousValue = 0.0;
 
-	public void deltaDecompression() {
-		Double previousValue = 0.0;
+        for (Data d : this.dataList) {
+            d.setValue(d.getValue() - previousValue);
+            previousValue += d.getValue();
+        }
+    }
 
-		for (Data d : this.dataList) {
-			d.setValue(d.getValue() + previousValue);
-			previousValue = d.getValue();
-		}
-	}
+    public void deltaDecompression() {
+        Double previousValue = 0.0;
+
+        for (Data d : this.dataList) {
+            d.setValue(d.getValue() + previousValue);
+            previousValue = d.getValue();
+        }
+    }
+
+    public ArrayNode serialize(ObjectMapper mapper) {
+        ArrayNode nodeSeries = mapper.createArrayNode();
+        for (Data d : this.dataList) {
+            nodeSeries.add(d.serialize(mapper));
+        }
+        return nodeSeries;
+    }
+
 
 }

@@ -1,8 +1,12 @@
 package org.tse.db.query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.tse.db.loaddatabase.DataGenerator;
 import org.tse.db.telecom.Collections;
 import org.tse.db.types.Series;
@@ -18,13 +22,16 @@ public class Query {
 	}
 
 
-	public List<Series> getAllSeries() {
-		int taille = collec.getCollection().size();
-		List<Series> series = new ArrayList<Series>();
+	public ArrayNode getAllSeries(ObjectMapper mapper) {
+		ArrayNode sensors = mapper.createArrayNode();
+
 		for ( String key : collec.getCollection().keySet()) {
-			series.add(collec.getSerie(key));
+			ObjectNode sensor = mapper.createObjectNode();
+			sensor.put("id", key);
+			sensor.set("series", collec.getSerie(key).serialize(mapper));
+			sensors.add(sensor);
 		}
-		return series;
+		return sensors;
 	}
 	
 	public Series getSeriesByID(String id) {
