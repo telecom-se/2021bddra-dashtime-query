@@ -119,8 +119,15 @@ public class Controller {
         }
     }
 
-    @PostMapping("/sensors")
-    void postGuerySerie(@RequestBody Series serie, @RequestParam() String id) {
-        this.query.createSerie(id, serie);
-    }
+	@PostMapping("/sensors/{id}")
+	String postQuerySerie(@RequestBody LinkedList<Data> newDataList, @PathVariable("id") String id) {
+		String res = this.query.createSerie(id, newDataList);
+		return res;
+	}
+
+	@PutMapping("/sensors/{id}")
+	String putQuerySerie(@RequestBody LinkedList<Data> newDataList, @PathVariable("id") String id) {
+		String res = this.query.addToSerie(id, newDataList);
+		return res;
+	}
 }
