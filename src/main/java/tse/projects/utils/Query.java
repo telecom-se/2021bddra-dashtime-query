@@ -12,7 +12,6 @@ public class Query {
             ["timestamp", "<=", "10"],
         ],
         "select": ["id", "name"],
-        "aggregate": "avg",
         "limit": 1
     }
      */

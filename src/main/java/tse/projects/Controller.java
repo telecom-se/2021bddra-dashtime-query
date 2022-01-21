@@ -54,7 +54,6 @@ public class Controller {
 
     @GetMapping(value = "/companies/{symbol}/stocks", produces = "application/json")
     public ResponseEntity<String> getStocks(@PathVariable("symbol") String symbol,
-                                            @RequestParam(required = false) Optional<String> aggregate,
                                             @RequestParam(required = false) Optional<Long> from,
                                             @RequestParam(required = false) Optional<Long> to) {
         try {

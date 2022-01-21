@@ -9,22 +9,16 @@ import java.rmi.Naming;
 
 @SpringBootApplication
 public class QueryApplication {
-    public static void main(String[] args) {
-        DatabaseServer.InitializeServer();
+    public static void main(String[] args) throws InterruptedException {
+
+        DatabaseServer.boot();
+
+        while (!DatabaseServer.booted) {
+            Thread.sleep(5000);
+            DatabaseServer.boot();
+        }
+
         SpringApplication.run(QueryApplication.class, args);
-
-//            Query query = new Query();
-//            query.setTable("stock");
-//            query.addSelect("id");
-//            query.addSelect("symbol_fk");
-//            query.addSelect("timestamp");
-//            query.addSelect("value");
-//            query.addWhere(new Condition("symbol", "=", "AAPL"));
-//
-//            Gson gson = new Gson();
-//
-//            String result = server.runQuery(gson.toJson(query));
-
     }
 
 }
