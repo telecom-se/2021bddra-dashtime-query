@@ -92,6 +92,64 @@ public class Controller {
         }
     }
 
+	@GetMapping("/sensors/{sensor_id}/time")
+	public ResponseEntity<List<Long>> getQueryTime(@PathVariable("sensor_id") String sensor_id,
+			@RequestParam(required = false) String aggregate, @RequestParam(required = false) String from,
+			@RequestParam(required = false) String to, @RequestParam(required = false) String equal) {
+		try {
+
+			if (aggregate == null)
+				aggregate = "";
+			if (from == null)
+				from = "0";
+			Double x = null;
+			if (to == null) {
+				x = Double.MAX_VALUE;
+				to = x.toString();
+			}
+			Double equalint = null;
+			if (equal != null)
+				equalint = Double.parseDouble(equal);
+
+			Double toint = Double.parseDouble(to);
+			Double fromint = Double.parseDouble(from);
+
+			Series serie = this.query.getSeriesByID(sensor_id);
+
+			List<Long> values = new ArrayList<Long>();
+			List<Long> valueequal = new ArrayList<Long>();
+
+			for (int i = 0; i < serie.getDataList().size(); i++) {
+				if (equal == null && serie.getDataList().get(i).getValue() < toint
+						&& serie.getDataList().get(i).getValue() > fromint)
+					values.add(serie.getDataList().get(i).getTimeStamp().getTimestamp());
+				if (equal != null && serie.getDataList().get(i).getValue().equals(equalint)) {
+					valueequal.add(serie.getDataList().get(i).getTimeStamp().getTimestamp());
+				}
+			}
+
+			if (aggregate.equals("avg") && equal == null) {
+				Long sum = (long) 0;
+				for (int i = 0; i < values.size(); i++) {
+					sum = sum + values.get(i);
+				}
+				List<Long> average = Arrays.asList(sum / (values.size()));
+				return new ResponseEntity<>(average, HttpStatus.OK);
+			}
+
+			else {
+				if (equal != null) {
+					return new ResponseEntity<>(valueequal, HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(values, HttpStatus.OK);
+				}
+			}
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
     @GetMapping("/sensors/{sensor_id}")
     public ResponseEntity<ObjectNode> getAllSerie(@PathVariable("sensor_id") String sensor_id) {
         try {
