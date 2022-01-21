@@ -38,9 +38,25 @@ public class Query {
 		return collec.getSerie(id);
 	}
 	
-	public Series createSerie(String id, Series serie) {
+	public String createSerie(String id, LinkedList<Data> newDataList) {
+		if (collec.getSerie(id) != null)
+			return "La serie existe deja, utilisez le put pour ajouter des donnees";
+		Series serie = new Series();
+		serie.setDataList(newDataList);
 		collec.addSerie(id, serie);
-		return serie;
+		return "La serie a ete ajoutees";
 	}
 
+	public String addToSerie(String id, LinkedList<Data> newDataList) {
+		if (collec.getSerie(id) == null)
+			return "La serie n'existe pas";
+		Series serie = collec.getSerie(id);
+		System.out.println(newDataList.size());
+		for (int i = 0; i < newDataList.size(); i++) {
+			System.out.println(i);
+			serie.addData(newDataList.get(i));
+		}
+		return "Les données on ete ajoutees";
+
+	}
 }
