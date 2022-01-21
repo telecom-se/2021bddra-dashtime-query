@@ -25,6 +25,7 @@ public class Controller {
         try {
             Query query = new Query();
             query.setTable("company");
+            query.addSelect("*");
 
             String response = DatabaseServer.server.runQuery(this.gson.toJson(query));
 
